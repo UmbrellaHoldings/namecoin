@@ -39,7 +39,7 @@ Var StartMenuGroup
 !insertmacro MUI_LANGUAGE English
 
 # Installer attributes
-OutFile bitcoin-mm-0.3.24-win32-setup.exe
+OutFile bitcoin-mm-10.2.2.5-win32-setup.exe
 InstallDir $PROGRAMFILES\Bitcoin-MM
 CRCCheck on
 XPStyle on
