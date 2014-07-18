@@ -550,7 +550,7 @@ void FormatException(char* pszMessage, std::exception* pex, const char* pszThrea
     pszModule[0] = '\0';
     GetModuleFileNameA(NULL, pszModule, sizeof(pszModule));
 #else
-    const char* pszModule = "bitcoin";
+    const char* pszModule = "bitcoin-mm";
 #endif
     if (pex)
         snprintf(pszMessage, 1000,
@@ -576,7 +576,7 @@ void PrintException(std::exception* pex, const char* pszThread)
     strMiscWarning = pszMessage;
 #ifdef GUI
     if (wxTheApp && !fDaemon)
-        MyMessageBox(pszMessage, "Bitcoin", wxOK | wxICON_ERROR);
+        MyMessageBox(pszMessage, "Bitcoin-MM", wxOK | wxICON_ERROR);
 #endif
     throw;
 }
@@ -588,7 +588,7 @@ void ThreadOneMessageBox(string strMessage)
     if (fMessageBoxOpen)
         return;
     fMessageBoxOpen = true;
-    ThreadSafeMessageBox(strMessage, "Bitcoin", wxOK | wxICON_EXCLAMATION);
+    ThreadSafeMessageBox(strMessage, "Bitcoin-MM", wxOK | wxICON_EXCLAMATION);
     fMessageBoxOpen = false;
 }
 
@@ -650,12 +650,12 @@ string MyGetSpecialFolderPath(int nFolder, bool fCreate)
 
 string GetDefaultDataDir()
 {
-    // Windows: C:\Documents and Settings\username\Application Data\Bitcoin
-    // Mac: ~/Library/Application Support/Bitcoin
-    // Unix: ~/.bitcoin
+    // Windows: C:\Documents and Settings\username\Application Data\Bitcoin-MM
+    // Mac: ~/Library/Application Support/Bitcoin-MM
+    // Unix: ~/.bitcoin-mm
 #ifdef __WXMSW__
     // Windows
-    return MyGetSpecialFolderPath(CSIDL_APPDATA, true) + "\\Bitcoin";
+    return MyGetSpecialFolderPath(CSIDL_APPDATA, true) + "\\Bitcoin-MM";
 #else
     char* pszHome = getenv("HOME");
     if (pszHome == NULL || strlen(pszHome) == 0)
@@ -667,10 +667,10 @@ string GetDefaultDataDir()
     // Mac
     strHome += "Library/Application Support/";
     filesystem::create_directory(strHome.c_str());
-    return strHome + "Bitcoin";
+    return strHome + "Bitcoin-MM";
 #else
     // Unix
-    return strHome + ".bitcoin";
+    return strHome + ".bitcoin-mm";
 #endif
 #endif
 }
@@ -720,7 +720,7 @@ string GetDataDir()
 string GetConfigFile()
 {
     namespace fs = boost::filesystem;
-    fs::path pathConfig(GetArg("-conf", "bitcoin.conf"));
+    fs::path pathConfig(GetArg("-conf", "bitcoin-mm.conf"));
     if (!pathConfig.is_complete())
         pathConfig = fs::path(GetDataDir()) / pathConfig;
     return pathConfig.string();
@@ -741,7 +741,7 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
     
     for (pod::config_file_iterator it(streamConfig, setOptions), end; it != end; ++it)
     {
-        // Don't overwrite existing settings so command line settings override bitcoin.conf
+        // Don't overwrite existing settings so command line settings override bitcoin-mm.conf
         string strKey = string("-") + it->string_key;
         if (mapSettingsRet.count(strKey) == 0)
             mapSettingsRet[strKey] = it->value[0];
@@ -752,7 +752,7 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
 string GetPidFile()
 {
     namespace fs = boost::filesystem;
-    fs::path pathConfig(GetArg("-pid", "bitcoind.pid"));
+    fs::path pathConfig(GetArg("-pid", "bitcoin-mmd.pid"));
     if (!pathConfig.is_complete())
         pathConfig = fs::path(GetDataDir()) / pathConfig;
     return pathConfig.string();
