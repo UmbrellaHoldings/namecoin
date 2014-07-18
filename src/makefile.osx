@@ -2,11 +2,11 @@
 # Distributed under the MIT/X11 software license, see the accompanying
 # file license.txt or http://www.opensource.org/licenses/mit-license.php.
 
-# Mac OS X makefile for bitcoin
+# Mac OS X makefile for bitcoin-mm
 # Laszlo Hanyecz (solar@heliacal.net)
 
 CXX=llvm-g++
-DEPSDIR=/Users/macosuser/bitcoin/deps
+DEPSDIR=/Users/macosuser/bitcoin-mm/deps
 
 INCLUDEPATHS= \
  -I"$(DEPSDIR)/include"
@@ -47,20 +47,20 @@ OBJS= \
     cryptopp/obj/sha.o \
     cryptopp/obj/cpu.o
 
-bitcoin: USE_UPNP:=1
+bitcoin-mm: USE_UPNP:=1
 	ifdef USE_UPNP
 		LIBS += $(DEPSDIR)/lib/libminiupnpc.a
 		DEFS += -DUSE_UPNP=$(USE_UPNP)
 	endif
 
-bitcoind: USE_UPNP:=0
+bitcoin-mmd: USE_UPNP:=0
 	ifdef USE_UPNP
 		LIBS += $(DEPSDIR)/lib/libminiupnpc.a
 		DEFS += -DUSE_UPNP=$(USE_UPNP)
 	endif
 	
 
-all: bitcoin
+all: bitcoin-mm
 
 
 obj/%.o: %.cpp $(HEADERS)
@@ -69,24 +69,24 @@ obj/%.o: %.cpp $(HEADERS)
 cryptopp/obj/%.o: cryptopp/%.cpp
 	$(CXX) -c $(CFLAGS) -O3 -DCRYPTOPP_DISABLE_ASM -o $@ $<
 
-bitcoin: $(OBJS) obj/ui.o obj/uibase.o
+bitcoin-mm: $(OBJS) obj/ui.o obj/uibase.o
 	$(CXX) $(CFLAGS) -o $@ $(LIBPATHS) $^ $(WXLIBS) $(LIBS)
 
 
 obj/nogui/%.o: %.cpp $(HEADERS)
 	$(CXX) -c $(CFLAGS) -o $@ $<
 
-bitcoind: $(OBJS:obj/%=obj/nogui/%)
+bitcoin-mmd: $(OBJS:obj/%=obj/nogui/%)
 	$(CXX) $(CFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS)
 
 obj/test/%.o: test/%.cpp $(HEADERS)
 	$(CXX) -c $(CFLAGS) -o $@ $<
 
-test_bitcoin: obj/test/test_bitcoin.o
+test_bitcoin-mm: obj/test/test_bitcoin-mm.o
 	$(CXX) $(CFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS) -lboost_unit_test_framework
 
 clean:
-	-rm -f bitcoin bitcoind test_bitcoin
+	-rm -f bitcoin-mm bitcoin-mmd test_bitcoin-mm
 	-rm -f obj/*.o
 	-rm -f obj/nogui/*.o
 	-rm -f obj/test/*.o
