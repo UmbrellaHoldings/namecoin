@@ -4,7 +4,7 @@ RequestExecutionLevel highest
 
 # General Symbol Definitions
 !define REGKEY "SOFTWARE\$(^Name)"
-!define VERSION 0.3.24
+!define VERSION 10.2.1.0
 !define COMPANY "Bitcoin project"
 !define URL http://www.bitcoin.org/
 
@@ -44,7 +44,7 @@ InstallDir $PROGRAMFILES\Bitcoin
 CRCCheck on
 XPStyle on
 ShowInstDetails show
-VIProductVersion 0.3.24.0
+VIProductVersion 10.2.1.0
 VIAddVersionKey ProductName Bitcoin
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey CompanyName "${COMPANY}"
