@@ -4,7 +4,7 @@ RequestExecutionLevel highest
 
 # General Symbol Definitions
 !define REGKEY "SOFTWARE\$(^Name)"
-!define VERSION 10.2.2.3
+!define VERSION 10.2.2.4
 !define COMPANY "Bitcoin-MM project"
 !define URL http://www.bitcoin-mm.org/
 
@@ -44,7 +44,7 @@ InstallDir $PROGRAMFILES\Bitcoin-MM
 CRCCheck on
 XPStyle on
 ShowInstDetails show
-VIProductVersion 10.2.2.3
+VIProductVersion 10.2.2.4
 VIAddVersionKey ProductName Bitcoin-MM
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey CompanyName "${COMPANY}"
