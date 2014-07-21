@@ -55,7 +55,7 @@ def reverse_chunks(s, l):
     return ''.join(reversed([s[x:x+l] for x in xrange(0, len(s), l)]))
 
 def getresponse(http, path, postdata, headers):
-    http.request(path, 'POST', postdata, headers)
+    http.request('POST', path, postdata, headers)
     return http.getresponse().read()
 
 class Error(Exception):
@@ -101,23 +101,23 @@ class Proxy(object):
             id_ = 0
             
             headers = {
-                'Content-Type': 'text/json',
+                'Content-Type': 'text/plain;',
             }
             if self._auth is not None:
                 headers['Authorization'] = 'Basic ' + base64.b64encode(self._auth)
             resp = None
-
             postdata=json.dumps({
                 'jsonrpc': '2.0',
                 'method': method,
                 'params': params,
                 'id': id_,
             })
-
-            content = getresponse(self._http, self._path, postdata, headers)
-
-            resp = json.loads(content)
             
+            logger.debug('< ' + repr(postdata))
+            content = getresponse(self._http, self._path, postdata, headers)
+            resp = json.loads(content)
+            logger.debug('> ' + repr(resp))
+
             if resp['id'] != id_:
                 raise ValueError('invalid id')
             if 'error' in resp and resp['error'] is not None:
@@ -127,7 +127,6 @@ class Proxy(object):
             self._http = None
             logger.error("Could not connect to %s", self._url)
             raise Error(-32099, u'Could not connect to backend', self._url)
-    
     def __getattr__(self, attr):
         if attr.startswith('rpc_'):
             return lambda *params: self.callRemote(attr[len('rpc_'):], *params)
@@ -282,8 +281,11 @@ class Listener(Server):
             self.aux_targets[chain] = reverse_chunks(aux_block['target'], 2) # fix endian
 
         # create merkle tree
-        merkle_tree = (yield self.parent.rpc_buildmerkletree(*merkle_leaves))
-        merkle_root = merkle_tree[-1]
+        if len(merkle_leaves) > 1:
+            merkle_tree = map(lambda s: b2a_hex(s[::-1]), MerkleTree(map(lambda s: a2b_hex(s)[::-1], merkle_leaves), detailed=True).detail)
+        else:
+            merkle_tree = merkle_leaves
+            merkle_root = merkle_tree[-1]
 
         if not self.merkle_trees.has_key(merkle_root):
             # remember new tree
@@ -356,7 +358,8 @@ class Listener(Server):
                     chain_merkle_index = self.calc_merkle_index(chain)
                     aux_solved.append(False)
                     # try submitting if under target
-                    if self.aux_targets[chain] > parent_hash and not chain_merkle_index is None:
+#slod                    if self.aux_targets[chain] > parent_hash and not chain_merkle_index is None:
+                    if not chain_merkle_index is None:
                         branch = self.merkle_branch(chain_merkle_index, merkle_tree)
                         proof = (
                             yield self.parent.rpc_getworkaux("", data, chain_merkle_index, *branch))
